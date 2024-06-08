@@ -6,11 +6,13 @@ import java.util.Scanner;
 
 //Clase principal del juego de preguntas y respuestas
 public class Main {
-
+	
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         int score = 0; // Variable para llevar la cuenta del puntaje
         int habitacion = 0; // Variable para saber en que habitación está
+        int vidas = 3; // Variable para saber cuanto intentos tiene el usuario para responder correctamente 
+        
         Habitaciones habitaciones = new Habitaciones();
 
         // Obtener la lista de preguntas
@@ -30,10 +32,23 @@ public class Main {
             if (respuesta.equalsIgnoreCase(String.valueOf(pregunta.getRespuestaCorrecta()))) {
                 score++; // Suma 1 al score
                 habitacion++; // Suma 1 a la habitación donde se encuentre
+                System.out.println("Respuesta correcta, puedes avanzar!");
+                System.out.println("");
+            }
+            else {
+                vidas = getRespuestaIncorrecta(vidas); // Actualiza el valor de vidas
+                System.out.println("PIERDES UNA VIDA (te quedan " + vidas +" vidas)");
+                if (vidas <= 0) {
+                    System.out.println("Te has quedado sin vidas. ¡Has perdido!");
+                    break; // Termina el bucle si el jugador se queda sin vidas
+                }
             }
             
+            
+ 
             // se asigna la habitación en la que se encuentra actualmente el jugador
             habitaciones.setHabitacion(habitacion);
+          
         }
 
         // Muestra el resultado final del jugador
@@ -49,7 +64,15 @@ public class Main {
         scanner.close();
     }
 
-    // Método para crear y devolver la lista de preguntas
+    private static int getRespuestaIncorrecta(int vidas) {
+		// TODO Auto-generated method stub
+    	 System.out.println("Respuesta incorrecta! ");
+    	
+    	 return vidas - 1; // Resta 1 a vidas y devuelve el nuevo valor
+		
+	}
+
+	// Método para crear y devolver la lista de preguntas
     public static List<Pregunta> obtenerPreguntas() {
         List<Pregunta> preguntas = new ArrayList<>(); // Crear una lista para almacenar las preguntas
         
@@ -73,4 +96,6 @@ public class Main {
         // Retorno de la lista de preguntas
         return preguntas;
     }
+   
+    
 }
