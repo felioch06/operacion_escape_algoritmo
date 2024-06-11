@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"operacion_escape_algoritmo","l":"Habitaciones"},{"p":"operacion_escape_algoritmo","l":"Main"},{"p":"operacion_escape_algoritmo","l":"Pregunta"}];updateSearchResults();
