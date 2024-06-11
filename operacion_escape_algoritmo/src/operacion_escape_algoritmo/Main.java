@@ -4,14 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-//Clase principal del juego de preguntas y respuestas
+
 public class Main {
-	
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         int score = 0; // Variable para llevar la cuenta del puntaje
-        int habitacion = 0; // Variable para saber en que habitación está
-        int vidas = 3; // Variable para saber cuanto intentos tiene el usuario para responder correctamente 
+        int habitacion = 0; // Variable para saber en qué habitación está
+        int vidas = 3; // Variable para saber cuántos intentos tiene el usuario para responder correctamente
+        int tiempoLimiteMinutos = 1; // Variable que define el limite de tiempo del jugador
+        long tiempoInicial = System.currentTimeMillis() / 1000; // Variable que define el tiempo inicial
         
         Habitaciones habitaciones = new Habitaciones();
 
@@ -20,7 +21,22 @@ public class Main {
 
         // En este bucle se desarrollan todas las preguntas y se obtienen las respuestas del usuario
         for (Pregunta pregunta : preguntas) {
-        	System.out.println("Responde a las siguiente pregunta para poder avanzar a la siguiente habitación: ");
+        	// Se hace la conversión en segundos y el tiempo restante en segundos
+            long tiempoTranscurridoSegundos = (System.currentTimeMillis() / 1000) - tiempoInicial;
+            
+            System.out.println(tiempoTranscurridoSegundos);
+            int tiempoRestanteSegundos = (int) ((tiempoLimiteMinutos * 60) - tiempoTranscurridoSegundos);
+            
+            // Se valida si el tiempo se ha agotado
+            if (tiempoRestanteSegundos <= 0) {
+                System.out.println("Te has quedado sin tiempo. ¡Has perdido!");
+                break; // Termina el bucle si se acaba el tiempo
+            }
+            
+            System.out.println("Tiempo restante: " + tiempoRestanteSegundos + " segundos");
+            
+            System.out.println("Responde a la siguiente pregunta para poder avanzar a la siguiente habitación:");
+            // Se imprime el enunciado y las opciones correpondientes
             System.out.println(pregunta.getEnunciado());
             for (String opcion : pregunta.getOpciones()) {
                 System.out.println(opcion);
@@ -28,6 +44,7 @@ public class Main {
             
             System.out.print("¿Cuál es tu respuesta? ");
             
+            // Se espera y almacena la respuesta ingresada por el usuario
             String respuesta = scanner.nextLine();
             if (respuesta.equalsIgnoreCase(String.valueOf(pregunta.getRespuestaCorrecta()))) {
                 score++; // Suma 1 al score
@@ -37,42 +54,37 @@ public class Main {
             }
             else {
                 vidas = getRespuestaIncorrecta(vidas); // Actualiza el valor de vidas
-                System.out.println("PIERDES UNA VIDA (te quedan " + vidas +" vidas)");
+                tiempoInicial -= 5; // Reducir 5 segundos del tiempo
+                System.out.println("Respuesta incorrecta! PIERDES UNA VIDA (te quedan " + vidas +" vidas)");
                 if (vidas <= 0) {
                     System.out.println("Te has quedado sin vidas. ¡Has perdido!");
                     break; // Termina el bucle si el jugador se queda sin vidas
                 }
             }
             
-            
- 
-            // se asigna la habitación en la que se encuentra actualmente el jugador
+            // Se asigna la habitación en la que se encuentra actualmente el jugador
             habitaciones.setHabitacion(habitacion);
-          
         }
 
         // Muestra el resultado final del jugador
         System.out.println("Has completado el cuestionario.");
         System.out.println("Tu puntaje es: " + score + " de " + preguntas.size() + ".");
         
-        if(preguntas.size() == habitaciones.getHabitacion()){
-        	System.out.println("¡Felicitaciones, has escapado!");        	
+        if (preguntas.size() == habitaciones.getHabitacion()){
+            System.out.println("¡Felicitaciones, has escapado!");            
         } else {
-        	System.out.println("La habitacion en la que quedaste es: " + habitaciones.getHabitacion() + ".");        	
+            System.out.println("La habitación en la que quedaste es: " + habitaciones.getHabitacion() + ".");            
         }
 
         scanner.close();
     }
 
     private static int getRespuestaIncorrecta(int vidas) {
-		// TODO Auto-generated method stub
-    	 System.out.println("Respuesta incorrecta! ");
-    	
-    	 return vidas - 1; // Resta 1 a vidas y devuelve el nuevo valor
-		
-	}
+        System.out.println("Respuesta incorrecta! ");
+        return vidas - 1; // Resta 1 a vidas y devuelve el nuevo valor
+    }
 
-	// Método para crear y devolver la lista de preguntas
+    // Método para crear y devolver la lista de preguntas
     public static List<Pregunta> obtenerPreguntas() {
         List<Pregunta> preguntas = new ArrayList<>(); // Crear una lista para almacenar las preguntas
         
@@ -92,10 +104,7 @@ public class Main {
         preguntas.add(new Pregunta("¿Qué interfaz debe implementarse para ordenar los objetos de una colección en Java?", 
                 new String[]{"a) Serializable", "b) Comparable", "c) Comparator", "d) Iterable"}, 'b'));
 
-        
         // Retorno de la lista de preguntas
         return preguntas;
     }
-   
-    
 }
